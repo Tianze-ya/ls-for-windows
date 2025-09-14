@@ -2,7 +2,6 @@ use colored::*;
 use std::process::Command;
 use std::{env, fs, path::PathBuf};
 
-
 struct Item {
     name: String,
     colored_name: ColoredString,
@@ -22,25 +21,29 @@ impl Item {
             String::from("dir")
         };
         let (icon, colored_name) = if is_hide {
-            ("󰘓", name.dimmed()) // 隐藏文件图标
+            if suffix == "dir" {
+                ("󰘓", name.dimmed())
+            } else {
+                ("󱞞", name.dimmed())
+            }
         } else {
             match suffix.as_str() {
-                "dir" => ("󰉋", name.blue()),           // 文件夹图标
-                "rs" => ("", name.green()),           // Rust文件图标
-                "md" => ("", name.normal()),          // Markdown文件图标
-                "toml" => ("", name.yellow()),        // TOML文件图标
-                "lock" => ("󰈡", name.red()),           // Lock文件图标
-                "gitignore" => ("󰊢", name.magenta()),  // Gitignore文件图标
-                "json" => ("", name.bright_yellow()), // JSON文件图标
-                "txt" => ("󰈙", name.cyan()),           // TXT文件图标
-                "html" => ("", name.red()),           // HTML文件图标
-                "css" => ("", name.blue()),           // CSS文件图标
-                "js" => ("", name.yellow()),          // JavaScript文件图标
-                "py" => ("", name.blue()),            // Python文件图标
-                "exe" => ("", name.red()),            // 可执行文件图标
-                "bat" => ("", name.yellow()),         // 批处理文件图标
-                "sh" => ("", name.green()),           // Shell脚本文件图标
-                _ => ("󰈔", name.normal()),             // 默认文件图标
+                "dir" => (" ", name.blue()),
+                "rs" => (" ", name.green()),
+                "md" => (" ", name.normal()),
+                "toml" => (" ", name.yellow()),
+                "lock" => ("󰈡", name.red()),
+                "gitignore" => ("󰊢 ", name.magenta()),
+                "json" => (" ", name.bright_yellow()),
+                "txt" => ("󰈙", name.cyan()),
+                "html" => (" ", name.red()),
+                "css" => (" ", name.blue()),
+                "js" => (" ", name.yellow()),
+                "py" => (" ", name.blue()),
+                "exe" => (" ", name.red()),
+                "bat" => (" ", name.yellow()),
+                "sh" => (" ", name.green()),
+                _ => ("󰈔 ", name.normal()),
             }
         };
         Item {
@@ -62,12 +65,12 @@ impl Item {
 
     #[allow(dead_code)]
     fn icon_print(&self) {
-        print!("{} {}  ", self.icon, self.colored_name);
+        print!("{}{}  ", self.icon, self.colored_name);
     }
 
     #[allow(dead_code)]
     fn icon_println(&self) {
-        println!("{} {}  ", self.icon, self.colored_name);
+        println!("{}{}  ", self.icon, self.colored_name);
     }
 
     #[allow(dead_code)]
@@ -109,20 +112,20 @@ fn main() {
     };
 
     if mode == "-h" {
-        println!("{}","版权所有 (c) 2024 by Tianze".yellow());
-        println!("{}","Usage: ls [path] [mode]".green());
-        println!("{}","path: 指定要列出的目录路径，默认为当前目录".blue());
-        println!("{}","mode: 指定显示模式，支持以下选项：".blue());
-        println!("{}","  -color    彩色显示文件和文件夹（默认）".purple());
-        println!("{}","  -ln       每行显示一个文件或文件夹".purple());
-        println!("{}","  -nocolor  不使用颜色显示文件和文件夹".purple());
-        println!("{}","  -icon     显示图标和颜色".purple());
-        println!("{}","  -iconln   显示图标，每行一个".purple());
-        println!("{}","  -h        显示帮助信息".purple());
-        println!("{}","  -v        显示版本信息".purple());
-        println!("{}","  -e        打开资源管理器".purple());
+        println!("{}", "版权所有 (c) 2024 by Tianze".yellow());
+        println!("{}", "Usage: ls [path] [mode]".green());
+        println!("{}", "path: 指定要列出的目录路径，默认为当前目录".blue());
+        println!("{}", "mode: 指定显示模式，支持以下选项：".blue());
+        println!("{}", "  -color    彩色显示文件和文件夹（默认）".purple());
+        println!("{}", "  -ln       每行显示一个文件或文件夹".purple());
+        println!("{}", "  -nocolor  不使用颜色显示文件和文件夹".purple());
+        println!("{}", "  -icon     显示图标和颜色".purple());
+        println!("{}", "  -iconln   显示图标，每行一个".purple());
+        println!("{}", "  -h        显示帮助信息".purple());
+        println!("{}", "  -v        显示版本信息".purple());
+        println!("{}", "  -e        打开资源管理器".purple());
         return;
-    }else if mode == "-e"{
+    } else if mode == "-e" {
         let current_dir = env::current_dir().expect("无法获取当前目录");
         let path_str = current_dir.to_str().expect("路径包含无效字符");
         Command::new("explorer.exe")
@@ -130,9 +133,9 @@ fn main() {
             .spawn()
             .expect("无法启动资源管理器");
         return;
-    }else if mode == "-v"{
-        println!("{}","版权所有 (c) 2024 by Tianze".yellow());
-        println!("{}","ls for windows: veresion 1.0.0".red());
+    } else if mode == "-v" {
+        println!("{}", "版权所有 (c) 2024 by Tianze".yellow());
+        println!("{}", "ls for windows: veresion 1.0.0".red());
         return;
     }
 
@@ -143,7 +146,7 @@ fn main() {
             return;
         }
     };
-    
+
     for item in result {
         match mode.as_str() {
             "-color" => item.print(),
