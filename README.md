@@ -6,7 +6,7 @@
 
 # 安装
 
-## 下载
+### 下载
 [下载地址](https://github.com/Tianze-ya/ls-for-windows/releases)
 
 ## 使用
@@ -15,14 +15,15 @@
 
 # 功能
 
-## ls
+### ls
 显示当前目录下的文件和文件夹
 
-## ls -h
+### ls -h
 显示帮助信息
 
-## ls -v
+### ls -v
 检查版本
 
 
-版权所有 (C) 2024 Tianze	
+# 版权
+版权所有 (C) 2024 Tianze
