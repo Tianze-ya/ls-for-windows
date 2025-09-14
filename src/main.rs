@@ -119,6 +119,8 @@ fn main() {
         println!("{}","  -icon     显示图标和颜色".purple());
         println!("{}","  -iconln   显示图标，每行一个".purple());
         println!("{}","  -h        显示帮助信息".purple());
+        println!("{}","  -v        显示版本信息".purple());
+        println!("{}","  -e        打开资源管理器".purple());
         return;
     }else if mode == "-e"{
         let current_dir = env::current_dir().expect("无法获取当前目录");
