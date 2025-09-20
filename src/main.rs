@@ -1,111 +1,19 @@
+mod file;
+mod item;
+mod tableprint;
 use colored::*;
+use std::env;
 use std::process::Command;
-use std::{env, fs, path::PathBuf};
-
-struct Item {
-    name: String,
-    colored_name: ColoredString,
-    icon: &'static str,
-}
-
-impl Item {
-    fn new(path: PathBuf) -> Item {
-        let name: String = path.file_name().unwrap().to_str().unwrap().to_string();
-        let is_hide = name.starts_with(".");
-        let suffix = if path.is_file() {
-            path.extension()
-                .and_then(|s| s.to_str())
-                .unwrap_or("none_file")
-                .to_string()
-        } else {
-            String::from("dir")
-        };
-        let (icon, colored_name) = if is_hide {
-            if suffix == "dir" {
-                ("󰘓", name.dimmed())
-            } else {
-                ("󱞞", name.dimmed())
-            }
-        } else {
-            match suffix.as_str() {
-                "dir" => (" ", name.blue()),
-                "rs" => (" ", name.green()),
-                "md" => (" ", name.normal()),
-                "toml" => (" ", name.yellow()),
-                "lock" => ("󰈡", name.red()),
-                "gitignore" => ("󰊢 ", name.magenta()),
-                "json" => (" ", name.bright_yellow()),
-                "txt" => ("󰈙", name.cyan()),
-                "html" => (" ", name.red()),
-                "css" => (" ", name.blue()),
-                "js" => (" ", name.yellow()),
-                "py" => (" ", name.blue()),
-                "exe" => (" ", name.red()),
-                "bat" => (" ", name.yellow()),
-                "sh" => (" ", name.green()),
-                _ => ("󰈔 ", name.normal()),
-            }
-        };
-        Item {
-            name,
-            colored_name,
-            icon,
-        }
-    }
-
-    #[allow(dead_code)]
-    fn print(&self) {
-        print!("{}  ", self.colored_name);
-    }
-
-    #[allow(dead_code)]
-    fn println(&self) {
-        println!("{}  ", self.colored_name);
-    }
-
-    #[allow(dead_code)]
-    fn icon_print(&self) {
-        print!("{}{}  ", self.icon, self.colored_name);
-    }
-
-    #[allow(dead_code)]
-    fn icon_println(&self) {
-        println!("{}{}  ", self.icon, self.colored_name);
-    }
-
-    #[allow(dead_code)]
-    fn nocolor_print(&self) {
-        print!("{}  ", self.name);
-    }
-
-    #[allow(dead_code)]
-    fn nocolor_println(&self) {
-        println!("{}  ", self.name);
-    }
-}
-
-fn read_directory(path: &str) -> std::io::Result<Vec<Item>> {
-    let entries = fs::read_dir(path)?;
-    let mut item: Vec<Item> = vec![];
-
-    for entry in entries {
-        let entry = entry?;
-        let path = entry.path();
-        item.push(Item::new(path));
-    }
-
-    return Ok(item);
-}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let (path, mode) = match args.len() {
-        1 => ("./".to_string(), "-color".to_string()),
+        1 => ("./".to_string(), file::get_config()),
         2 => {
             if args[1].starts_with("-") {
                 ("./".to_string(), args[1].clone())
             } else {
-                (args[1].clone(), "-color".to_string())
+                (args[1].clone(), file::get_config())
             }
         }
         _ => (args[1].clone(), args[2].clone()),
@@ -139,7 +47,7 @@ fn main() {
         return;
     }
 
-    let result = match read_directory(path.as_str()) {
+    let items = match file::read_directory(path.as_str(),mode) {
         Ok(v) => v,
         Err(_e) => {
             println!("{}", "Error: 找不到文件夹".red());
@@ -147,14 +55,5 @@ fn main() {
         }
     };
 
-    for item in result {
-        match mode.as_str() {
-            "-color" => item.print(),
-            "-ln" => item.println(),
-            "-nocolor" => item.nocolor_print(),
-            "-icon" => item.icon_print(),
-            "-iconln" => item.icon_println(),
-            _ => item.icon_print(),
-        }
-    }
+    items.print();
 }

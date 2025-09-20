@@ -1,4 +1,5 @@
 /target
 /text
+/test_dir
 *.bat
 *.exe
