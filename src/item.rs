@@ -1,16 +1,19 @@
 use crate::tableprint::tableprint;
+use std::fmt;
 use colored::*;
 use std::path::PathBuf;
 
 #[allow(dead_code)]
 pub struct Item {
     name: String,
-    print: String,
+    text: String,
+    icon: String,
 }
 
 pub struct ItemList {
     items: Vec<Item>,
     mode: String,
+    icon: bool,
 }
 
 impl Item {
@@ -33,36 +36,75 @@ impl Item {
             }
         } else {
             match suffix.as_str() {
-                "dir" => ("  ", name.blue()),
-                "rs" => ("  ", name.green()),
-                "md" => ("  ", name.normal()),
-                "toml" => ("  ", name.yellow()),
-                "lock" => ("󰈡 ", name.red()),
-                "gitignore" => ("󰊢 ", name.magenta()),
-                "json" => (" ", name.bright_yellow()),
+                "dir" => ("", name.blue()),
+                "rs" => ("", name.green()),
+                "md" => ("", name.normal()),
+                "toml" => ("", name.yellow()),
+                "lock" => ("󰈡", name.red()),
+                "json" => ("", name.bright_yellow()),
                 "txt" => ("󰈙", name.cyan()),
-                "html" => (" ", name.red()),
-                "css" => (" ", name.blue()),
-                "js" => (" ", name.yellow()),
-                "py" => (" ", name.blue()),
-                "exe" => (" ", name.red()),
-                "bat" => (" ", name.yellow()),
-                "sh" => (" ", name.green()),
-                _ => ("󰈔 ", name.normal()),
+                "html" => ("", name.red()),
+                "css" => ("", name.blue()),
+                "js" => ("", name.yellow()),
+                "py" => ("", name.blue()),
+                "exe" => ("", name.red()),
+                "bat" => ("", name.red()),
+                "sh" => ("", name.green()),
+                _ => ("󰈔", name.white()),
             }
         };
 
         let print = match mode.as_str() {
-            "-color" => format!("{}", colored_name),
-            "-ln" => format!("{}", colored_name),
-            "-nocolor" => format!("{}", name),
-            "-nocolorln" => format!("{}", name),
-            "-icon" => format!("{}{}", icon, colored_name),
-            "-iconln" => format!("{}{}", icon, colored_name),
-            _ => format!("{}", name),
+            "-color" | "-ln" => Item {
+                name,
+                text: colored_name.to_string(),
+                icon: "".to_string(),
+            },
+            "-nocolor" | "-nocolorln" => Item {
+                name: name.clone(),
+                text: name.to_string(),
+                icon: "".to_string(),
+            },
+            "-icon" | "-iconln" => Item {
+                name: name.clone(),
+                text: colored_name.to_string(),
+                icon: icon.to_string(),
+            },
+            _ => Item {
+                name: name.clone(),
+                text: name.to_string(),
+                icon: "".to_string(),
+            },
         };
 
-        Item { name, print }
+        return print;
+    }
+
+    #[allow(dead_code)]
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
+
+    #[allow(dead_code)]
+    pub fn get_text(&self) -> &String {
+        &self.text
+    }
+
+    #[allow(dead_code)]
+    pub fn get_icon(&self) -> &String {
+        &self.icon
+    }
+}
+
+impl fmt::Display for Item {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // 如果有图标，将图标和文本一起显示
+        if !self.icon.is_empty() {
+            write!(f, "{} {}", self.icon, self.text)
+        } else {
+            // 否则只显示文本
+            write!(f, "{}", self.text)
+        }
     }
 }
 
@@ -70,7 +112,8 @@ impl ItemList {
     pub fn new(mode: String) -> ItemList {
         ItemList {
             items: vec![],
-            mode,
+            mode: { mode.clone() },
+            icon: { mode.starts_with("-icon") },
         }
     }
 
@@ -78,13 +121,27 @@ impl ItemList {
         self.items.push(item);
     }
 
+    pub fn get_items(&self) -> &Vec<Item> {
+        &self.items
+    }
+
+    pub fn get_icon(&self) -> bool {
+        self.icon
+    }
+
     pub fn print(&self) {
-        if &self.mode == "-ln" || &self.mode == "-nocolorln" || &self.mode == "-iconln" {
-            for item in &self.items {
-                println!("{}", item.print);
+        if self.mode.ends_with("ln") {
+            if self.icon {
+                for item in &self.items {
+                    println!("{} {}", item.icon, item.text);
+                }
+            } else {
+                for item in &self.items {
+                    println!("{}", item.text);
+                }
             }
         } else {
-            tableprint(self.items.iter().map(|i| i.print.clone()).collect());
+            tableprint(self);
         }
     }
 }
