@@ -13,7 +13,7 @@ fn strip_ansi_codes(text: &str) -> String {
 pub fn tableprint(itemlist: &ItemList) {
     // 获取终端宽度
     let term_width = if let Some((Width(w), _)) = terminal_size() {
-        w as usize -25
+        w as usize
     } else {
         80 // 默认终端宽度
     };
@@ -23,7 +23,7 @@ pub fn tableprint(itemlist: &ItemList) {
     let max_width = items
         .iter()
         .map(|item| {
-            let clean_text = strip_ansi_codes(item.get_text());
+            let clean_text = strip_ansi_codes(item.get_name());
             UnicodeWidthStr::width(clean_text.as_str())
         })
         .max()
