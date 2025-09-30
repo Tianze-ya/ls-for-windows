@@ -30,9 +30,9 @@ impl Item {
         };
         let (icon, colored_name) = if is_hide {
             if suffix == "dir" {
-                ("󰘓", name.dimmed())
-            } else {
                 ("󱞞", name.dimmed())
+            } else {
+                ("󰘓", name.dimmed())
             }
         } else {
             match suffix.as_str() {

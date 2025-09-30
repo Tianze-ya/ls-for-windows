@@ -31,8 +31,8 @@ pub fn tableprint(itemlist: &ItemList) {
     let num_cols = (term_width / max_width).max(1); // 至少一列
     let num_rows = (items.len() + num_cols - 1) / num_cols; // 向上取整
 
-    println!("Terminal width: {}, max width: {}", term_width, max_width);
-    println!("Number of columns: {}, rows: {}", num_cols, num_rows);
+    //println!("Terminal width: {}, max width: {}", term_width, max_width);
+    //println!("Number of columns: {}, rows: {}", num_cols, num_rows);
 
     // 按行添加数据
     for row in 0..num_rows {
