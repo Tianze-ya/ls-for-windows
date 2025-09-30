@@ -1,14 +1,8 @@
+use crate::item::ItemList;
 use prettytable::{Cell, Row, Table};
+use regex::Regex;
 use terminal_size::{Width, terminal_size};
 use unicode_width::UnicodeWidthStr;
-use crate::item::ItemList;
-use regex::Regex;
-
-// 去除ANSI转义字符的正则表达式
-fn strip_ansi_codes(text: &str) -> String {
-    let re = Regex::new(r"\x1b\[[0-9;]*m").unwrap();
-    re.replace_all(text, "").to_string()
-}
 
 pub fn tableprint(itemlist: &ItemList) {
     // 获取终端宽度
@@ -17,29 +11,28 @@ pub fn tableprint(itemlist: &ItemList) {
     } else {
         80 // 默认终端宽度
     };
-    
     let items = itemlist.get_items();
+    let tabwidth = 4;
+    let mut table = Table::new();
+    // 不显示表格边框和分隔线，更接近 ls 的外观
+    table.set_format(*prettytable::format::consts::FORMAT_CLEAN);
     // 计算最大文件名宽度（考虑Unicode字符），去除ANSI转义字符
     let max_width = items
         .iter()
         .map(|item| {
-            let clean_text = strip_ansi_codes(item.get_name());
+            let re = Regex::new(r"\x1b\[[0-9;]*m").unwrap();
+            let clean_text = re.replace_all(item.get_name(), "").to_string();
             UnicodeWidthStr::width(clean_text.as_str())
         })
         .max()
         .unwrap_or(0)
-        + 2; // 添加一些间距
+        + tabwidth; // 添加一些间距
+    // 计算可以显示多少列
+    let num_cols = (term_width / max_width).max(1); // 至少一列
+    let num_rows = (items.len() + num_cols - 1) / num_cols; // 向上取整
 
     println!("Terminal width: {}, max width: {}", term_width, max_width);
-
-    // 计算可以显示多少列
-    let num_cols = (term_width / max_width).max(1);
-    let num_rows = (items.len() + num_cols - 1) / num_cols; // 向上取整
     println!("Number of columns: {}, rows: {}", num_cols, num_rows);
-
-    let mut table = Table::new();
-    // 不显示表格边框和分隔线，更接近 ls 的外观
-    table.set_format(*prettytable::format::consts::FORMAT_CLEAN);
 
     // 按行添加数据
     for row in 0..num_rows {
@@ -68,6 +61,34 @@ pub fn tableprint(itemlist: &ItemList) {
 
         table.add_row(Row::new(cells));
     }
+
+    {/*
+    let mut count = 1;
+    for item in items {
+        if itemlist.get_icon() {
+            print!(
+                "{} {:<width$}{:<tabwidth$}",
+                item.get_icon(),
+                item.get_text(),
+                " ",
+                width = max_width,
+                tabwidth = tabwidth
+            );
+        } else {
+            print!(
+                "{:<width$}{:<tabwidth$}",
+                item.get_text(),
+                " ",
+                width = max_width,
+                tabwidth = tabwidth
+            );
+        }
+        if count % num_cols == 0 {
+            println!();
+        }
+        count += 1;
+    }
+    */}
 
     table.printstd();
 }

@@ -38,7 +38,7 @@ impl Item {
             match suffix.as_str() {
                 "dir" => ("", name.blue()),
                 "rs" => ("", name.green()),
-                "md" => ("", name.normal()),
+                "md" => ("", name.white()),
                 "toml" => ("", name.yellow()),
                 "lock" => ("󰈡", name.red()),
                 "json" => ("", name.bright_yellow()),
