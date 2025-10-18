@@ -43,3 +43,10 @@ pub fn get_config() -> String {
     };
     return mode;
 }
+
+pub fn set_config(mode: String) {
+    let exe = env::current_exe().unwrap();
+    let dir = exe.parent().unwrap();
+    let config_path = dir.join("config.txt").to_str().unwrap().to_string();
+    fs::write(&config_path, mode).expect("无法修改配置文件");
+}

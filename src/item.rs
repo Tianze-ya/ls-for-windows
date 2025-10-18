@@ -91,17 +91,14 @@ impl Item {
         return print;
     }
 
-    #[allow(dead_code)]
     pub fn get_name(&self) -> &String {
         &self.name
     }
 
-    #[allow(dead_code)]
     pub fn get_text(&self) -> &String {
         &self.text
     }
 
-    #[allow(dead_code)]
     pub fn get_icon(&self) -> &String {
         &self.icon
     }
