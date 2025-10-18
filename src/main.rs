@@ -6,6 +6,10 @@ use std::env;
 use std::process::Command;
 
 fn main() {
+    //Todo
+    //-set..
+    //-get
+    //new printer
     let args: Vec<String> = env::args().collect();
     let (path, mode) = match args.len() {
         1 => ("./".to_string(), file::get_config()),

@@ -1,13 +1,16 @@
 use crate::tableprint::tableprint;
-use std::fmt;
 use colored::*;
+use std::fmt;
 use std::path::PathBuf;
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct Item {
     name: String,
     text: String,
     icon: String,
+    pub suffix: String,
+    pub is_hide: bool,
 }
 
 pub struct ItemList {
@@ -59,21 +62,29 @@ impl Item {
                 name,
                 text: colored_name.to_string(),
                 icon: "".to_string(),
+                suffix,
+                is_hide,
             },
             "-nocolor" | "-nocolorln" => Item {
                 name: name.clone(),
                 text: name.to_string(),
                 icon: "".to_string(),
+                suffix,
+                is_hide,
             },
             "-icon" | "-iconln" => Item {
                 name: name.clone(),
                 text: colored_name.to_string(),
                 icon: icon.to_string(),
+                suffix,
+                is_hide,
             },
             _ => Item {
                 name: name.clone(),
                 text: name.to_string(),
                 icon: "".to_string(),
+                suffix,
+                is_hide,
             },
         };
 
@@ -94,6 +105,7 @@ impl Item {
     pub fn get_icon(&self) -> &String {
         &self.icon
     }
+
 }
 
 impl fmt::Display for Item {
@@ -105,6 +117,12 @@ impl fmt::Display for Item {
             // 否则只显示文本
             write!(f, "{}", self.text)
         }
+    }
+}
+
+impl fmt::Debug for Item {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Item {{ name: {}, text: {}, icon: {}, suffix: {}, is_hide: {} }}", self.name, self.text, self.icon, self.suffix, self.is_hide)
     }
 }
 
@@ -125,7 +143,15 @@ impl ItemList {
         &self.items
     }
 
-    pub fn get_icon(&self) -> bool {
+    pub fn get_copy_items(self) -> Vec<Item> {
+        self.items.clone()
+    }
+
+    pub fn get_mut_items(&mut self) -> &mut Vec<Item> {
+        &mut self.items
+    }
+
+    pub fn is_icon(&self) -> bool {
         self.icon
     }
 
@@ -145,3 +171,13 @@ impl ItemList {
         }
     }
 }
+
+impl<'a> IntoIterator for &'a ItemList {
+    type Item = &'a Item;
+    type IntoIter = std::slice::Iter<'a, Item>;
+    
+    fn into_iter(self) -> Self::IntoIter {
+        self.items.iter()
+    }
+}
+

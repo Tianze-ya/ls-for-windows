@@ -16,7 +16,7 @@ pub fn tableprint(itemlist: &ItemList) {
     let mut table = Table::new();
     // 不显示表格边框和分隔线，更接近 ls 的外观
     table.set_format(*prettytable::format::consts::FORMAT_CLEAN);
-    // 计算最大文件名宽度（考虑Unicode字符），去除ANSI转义字符
+    // 计算最大文件名宽度
     let max_width = items
         .iter()
         .map(|item| {
@@ -43,7 +43,7 @@ pub fn tableprint(itemlist: &ItemList) {
                 break;
             }
             // 左对齐，并使用计算出的宽度进行填充
-            if itemlist.get_icon() {
+            if itemlist.is_icon() {
                 cells.push(Cell::new(&format!(
                     "{} {:<width$}",
                     items[index].get_icon(),
