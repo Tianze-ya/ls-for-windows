@@ -1,4 +1,4 @@
-use crate::tableprint::tableprint;
+use crate::printer::tableprint;
 use colored::*;
 use std::fmt;
 use std::path::PathBuf;
@@ -9,8 +9,6 @@ pub struct Item {
     name: String,
     text: String,
     icon: String,
-    pub suffix: String,
-    pub is_hide: bool,
 }
 
 pub struct ItemList {
@@ -62,29 +60,21 @@ impl Item {
                 name,
                 text: colored_name.to_string(),
                 icon: "".to_string(),
-                suffix,
-                is_hide,
             },
             "-nocolor" | "-nocolorln" => Item {
                 name: name.clone(),
                 text: name.to_string(),
                 icon: "".to_string(),
-                suffix,
-                is_hide,
             },
             "-icon" | "-iconln" => Item {
                 name: name.clone(),
                 text: colored_name.to_string(),
                 icon: icon.to_string(),
-                suffix,
-                is_hide,
             },
             _ => Item {
                 name: name.clone(),
                 text: name.to_string(),
                 icon: "".to_string(),
-                suffix,
-                is_hide,
             },
         };
 
@@ -119,7 +109,7 @@ impl fmt::Display for Item {
 
 impl fmt::Debug for Item {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Item {{ name: {}, text: {}, icon: {}, suffix: {}, is_hide: {} }}", self.name, self.text, self.icon, self.suffix, self.is_hide)
+        write!(f, "Item {{ name: {}, text: {}, icon: {}}}", self.name, self.text, self.icon)
     }
 }
 
@@ -138,14 +128,6 @@ impl ItemList {
 
     pub fn get_items(&self) -> &Vec<Item> {
         &self.items
-    }
-
-    pub fn get_copy_items(self) -> Vec<Item> {
-        self.items.clone()
-    }
-
-    pub fn get_mut_items(&mut self) -> &mut Vec<Item> {
-        &mut self.items
     }
 
     pub fn is_icon(&self) -> bool {

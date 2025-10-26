@@ -4,29 +4,13 @@ use std::fs;
 
 pub fn read_directory(path: &str, mode: String) -> std::io::Result<ItemList> {
     let entries = fs::read_dir(path)?;
-    let mut olditems = ItemList::new(mode.clone());
-    let mut diritems = ItemList::new(mode.clone());
-    let mut hideitems = ItemList::new(mode.clone());
     let mut items = ItemList::new(mode.clone());
 
     for entry in entries {
         let entry = entry?;
         let path = entry.path();
-        if path.is_dir() {
-            diritems.add(Item::new(path, mode.clone()));
-        } else if path.file_name().unwrap().to_str().unwrap().starts_with(".") {
-            hideitems.add(Item::new(path, mode.clone()));
-        } else {
-            olditems.add(Item::new(path, mode.clone()));
-        }
+        items.add(Item::new(path, mode.clone()));
     }
-    olditems
-        .get_mut_items()
-        .sort_by(|a, b| a.suffix.cmp(&b.suffix));
-    items.get_mut_items().extend(diritems.get_copy_items());
-    items.get_mut_items().extend(hideitems.get_copy_items());
-    items.get_mut_items().extend(olditems.get_copy_items());
-
     return Ok(items);
 }
 

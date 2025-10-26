@@ -1,6 +1,6 @@
 mod file;
 mod item;
-mod tableprint;
+mod printer;
 use colored::*;
 use std::env;
 use std::process::Command;

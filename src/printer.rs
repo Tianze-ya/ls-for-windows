@@ -12,7 +12,7 @@ pub fn tableprint(itemlist: &ItemList) {
         80 // 默认终端宽度
     };
     let items = itemlist.get_items();
-    let tabwidth = 4;
+    let tabwidth = 2;
     let mut table = Table::new();
     // 不显示表格边框和分隔线，更接近 ls 的外观
     table.set_format(*prettytable::format::consts::FORMAT_CLEAN);
