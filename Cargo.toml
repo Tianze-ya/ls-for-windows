@@ -5,7 +5,4 @@ edition = "2024"
 
 [dependencies]
 colored = "3.0.0"
-prettytable = "0.10.0"
 terminal_size = "0.4.3"
-unicode-width = "0.2.1"
-regex = "1.10.4"

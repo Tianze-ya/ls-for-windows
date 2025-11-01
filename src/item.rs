@@ -1,4 +1,4 @@
-use crate::printer::tableprint;
+use crate::printer::stdprint;
 use colored::*;
 use std::fmt;
 use std::path::PathBuf;
@@ -92,7 +92,6 @@ impl Item {
     pub fn get_icon(&self) -> &String {
         &self.icon
     }
-
 }
 
 impl fmt::Display for Item {
@@ -109,7 +108,11 @@ impl fmt::Display for Item {
 
 impl fmt::Debug for Item {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Item {{ name: {}, text: {}, icon: {}}}", self.name, self.text, self.icon)
+        write!(
+            f,
+            "Item {{ name: {}, text: {}, icon: {}}}",
+            self.name, self.text, self.icon
+        )
     }
 }
 
@@ -146,7 +149,7 @@ impl ItemList {
                 }
             }
         } else {
-            tableprint(self);
+            stdprint(self);
         }
     }
 }
@@ -154,9 +157,8 @@ impl ItemList {
 impl<'a> IntoIterator for &'a ItemList {
     type Item = &'a Item;
     type IntoIter = std::slice::Iter<'a, Item>;
-    
+
     fn into_iter(self) -> Self::IntoIter {
         self.items.iter()
     }
 }
-
